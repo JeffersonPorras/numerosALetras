@@ -23,15 +23,19 @@ const decenas = [
   { numero: 9, letras: "Noventa y " },
 ];
 const numerosDeExcepcionDeDecenas = [
+  { numero: 10, letras: "Diez" },
   { numero: 11, letras: "Once" },
   { numero: 12, letras: "Doce" },
   { numero: 13, letras: "Trece" },
   { numero: 14, letras: "Catorce" },
   { numero: 15, letras: "Quince" },
+  { numero: 20, letras: "Veinte" },
 ];
 const numerosDeExcepcionDeCentenas = [
-  { numero: 1, letras: "Ciento " },
+  { numero: 1, letras: "Ciento" },
   { numero: 5, letras: "Quinientos " },
+  { numero: 7, letras: "Sete" },
+  { numero: 9, letras: "Nove" },
 ];
 /**
  * Esta Funcion indica si el usuario ingreso un numero o no
@@ -76,15 +80,21 @@ function construirCadena(numero, unidadAEvaluar) {
       unidad = conseguirCadenaDeLaUnidad(arrayDelNumero[0])
             break;
     case "Decenas":
-      decena = conseguirCadenaDeLaDecena(arrayDelNumero[0]);
-      unidad = conseguirCadenaDeLaUnidad(arrayDelNumero[1], true);
+      decena = excepcionesDecena(numero)
+        if (decena === null) {
+          decena = conseguirCadenaDeLaDecena(arrayDelNumero[0]+arrayDelNumero[1]);
+          unidad = conseguirCadenaDeLaUnidad(arrayDelNumero[1], true);
+        }
       break;
     case "Centenas":
-        let FragmentoDecena = arrayDelNumero[1]+arrayDelNumero[2]
-        console.log(FragmentoDecena)
-        centena = conseguirCadenaDeLaCentena()
-        decena = conseguirCadenaDeLaDecena(FragmentoDecena);
-        unidad = conseguirCadenaDeLaUnidad(arrayDelNumero[2], true);
+            centena = conseguirCadenaDeLaCentena(arrayDelNumero[0],arrayDelNumero[1],arrayDelNumero[2])
+            decena = excepcionesDecena(arrayDelNumero[1]+arrayDelNumero[2])
+            console.log(decena);
+            if (decena === null) {
+              console.log(arrayDelNumero[1]+arrayDelNumero[2]);
+              decena = conseguirCadenaDeLaDecena(arrayDelNumero[1]+arrayDelNumero[2]);
+              unidad = conseguirCadenaDeLaUnidad(arrayDelNumero[2], true);
+            }
 
       break;
     default:
@@ -114,29 +124,59 @@ function conseguirCadenaDeLaDecena(numeroCompleto) {
 
   let arrayDelNumero = numeroCompleto.split("");
   let objetoDecenas = decenas.find((o) => o.numero === parseInt(arrayDelNumero[0]))
-  let objetoExcepciones = numerosDeExcepcionDeDecenas.find((o) => o.numero === parseInt(arrayDelNumero[0]+arrayDelNumero[1]))
   let objetoUnidades = parseInt(arrayDelNumero[1]);
 
   if (objetoUnidades === 0 && objetoDecenas.numero >= 3) {
     decena = objetoDecenas.letras.replace("y", "");
-  } else if (objetoUnidades === 0 && objetoDecenas.numero === 1) {
-    decena = "Diez";
-  } else if (objetoUnidades === 0 && objetoDecenas.numero === 2) {
-    decena = "veinte";
-  }else if (objetoUnidades >= 1 && objetoUnidades <= 5 && objetoDecenas.numero === 1){
-    decena = objetoExcepciones.letras
-  }
-  else {
+  }else {
     decena = objetoDecenas.letras;
   }
   return decena;
 }
 
+function excepcionesDecena(numero) {
+  let decena = ''
+  let objetoExcepciones = numerosDeExcepcionDeDecenas.find((o) => o.numero === parseInt(numero) )
+  if (objetoExcepciones){
+    decena = objetoExcepciones.letras
+  }else{
+    decena = null
+  }
+  return decena
+}
 /**esta Funcion muetra las centenas en letras */
-function conseguirCadenaDeLaCentena(numero) {
+function conseguirCadenaDeLaCentena(numero, valorDecena, valorUnidad) {
     let centena =''
+    if(parseInt(numero) === 1 && parseInt(valorDecena)  === 0 && parseInt(valorUnidad) === 0){
+      centena = "cien"
+    }else{
+      centena = excepcionesDeLaCentena(numero)
+      if(centena === null){
+        let objetosCentenas = unidades.find((o) => o.numero === parseInt(numero))
+        if (objetosCentenas){
+          centena =  `${objetosCentenas.letras}cientos `
+        }
+      } else if (parseInt(numero) === 1) {
+        
+      }
+    }
+    return centena
+}
 
-
+function excepcionesDeLaCentena(numero,valorUnidad) {
+  let centena = ''
+ 
+  let objetoExcepcionesCentena = numerosDeExcepcionDeCentenas.find((o) => o.numero === parseInt(numero))
+  if(objetoExcepcionesCentena){
+    if (parseInt(numero) === 1) {
+      centena = `${objetoExcepcionesCentena.letras} `
+    }else{
+      centena = `${objetoExcepcionesCentena.letras}cientos`
+    }
+  }else{
+    centena = null
+  }
+  return centena
 }
 /**esta Funcion convierte el numero dado a letras */
 function convertirNumerosALetras(numero) {
@@ -162,5 +202,11 @@ console.log(convertirNumerosALetras("10"));
 console.log(convertirNumerosALetras("102"));
 console.log(convertirNumerosALetras(48));
 console.log(convertirNumerosALetras(15));
-console.log(convertirNumerosALetras(20)); */
-console.log(convertirNumerosALetras(11));
+console.log(convertirNumerosALetras(20));
+console.log(convertirNumerosALetras(92)); */
+/* console.log(convertirNumerosALetras(700));
+console.log(convertirNumerosALetras(321));
+console.log(convertirNumerosALetras(845));
+console.log(convertirNumerosALetras(001));
+console.log(convertirNumerosALetras(999)); */
+console.log(convertirNumerosALetras(111));
